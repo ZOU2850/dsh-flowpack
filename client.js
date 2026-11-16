@@ -489,6 +489,7 @@ window.__ModuleLoader__.load({
         const [pinText, setPinText] = useState('')
         const [importJson, setImportJson] = useState('')
         const timerRef = useRef(null)
+        const prevSessionIdRef = useRef(sessionId || '')
         const uiState = useCapsuleUi()
 
         const scheme = useResolvedScheme(settings?.appearanceTheme || 'host')
@@ -500,8 +501,10 @@ window.__ModuleLoader__.load({
         }, [])
 
         useEffect(() => {
-          if (sessionId && (!targetSessionId || targetSessionId === '')) {
-            setTargetSessionId(sessionId)
+          const next = sessionId || ''
+          if (next && (next !== prevSessionIdRef.current || !targetSessionId)) {
+            prevSessionIdRef.current = next
+            setTargetSessionId(next)
           }
         }, [sessionId, targetSessionId])
 
@@ -512,7 +515,7 @@ window.__ModuleLoader__.load({
             const [sRes, pkRes, sesRes, capRes, actRes, trRes] = await Promise.all([
               api('/api/flowpack.settings'),
               api('/api/flowpack.packs'),
-              api('/api/flowpack.sessions?limit=25').catch(() => ({ sessions: [] })),
+              api('/api/flowpack.sessions?limit=50').catch(() => ({ sessions: [] })),
               api('/api/flowpack.capsules?summary=1').catch(() => ({ capsules: [], activations: { global: [], workspaces: {}, sessions: {} } })),
               fetchActivateLite(effectiveSessionId, cwd, uiState.syncVersion).catch(() => ({ resolved: [] })),
               api('/api/flowpack.train').catch(() => ({ supported: true, trainings: [] })),

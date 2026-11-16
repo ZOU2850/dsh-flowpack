@@ -18,6 +18,9 @@ function createMockHostHarness(sessionFixture) {
   const services = {
     tools: {
       register(def) {
+        if (!def.output || typeof def.output !== 'object' || typeof def.output.render !== 'function' || !def.output.schema) {
+          throw new TypeError(`tool "${def.name}" must declare output { schema, render, presentationMeta? }`)
+        }
         registeredTools.set(def.name, def)
         return () => registeredTools.delete(def.name)
       },
@@ -139,6 +142,8 @@ test('full DSH host lifecycle: tools, commands, routes, runtime skills, and comp
 
     assert.ok(harness.registeredTools.has('flowpack_workflow'))
     assert.ok(harness.registeredTools.has('flowpack_memory'))
+    assert.ok(harness.registeredTools.has('flowpack_capsule'))
+    assert.ok(harness.registeredTools.has('flowpack_train'))
     assert.ok(harness.registeredCommands.has('flow-distill'))
     assert.ok(harness.registeredCommands.has('flow-pack'))
     assert.ok(harness.registeredCommands.has('flow-verify'))
