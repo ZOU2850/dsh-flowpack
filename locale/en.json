@@ -1,0 +1,10 @@
+{
+  "plugin": {
+    "name": "Capsules & Memory (FlowPack)",
+    "description": "Turn successful conversations into reusable one-click Experience Capsule buttons that work across chats and subagents with runtime self-healing and full version history."
+  },
+  "categories": {
+    "workflow": "Experience Capsules & Workflows",
+    "memory": "Long-Term Memory Notes"
+  }
+}
